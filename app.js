@@ -1,6 +1,5 @@
 const fs = require("fs");
 const path = require("path");
-const pLimit = require("p-limit");
 const dns = require("dns").promises;
 
 const sapl = "abcdefghijklmnopqrstuvwxyz";
@@ -40,29 +39,25 @@ const generateDomains = (baseDomain) => {
 
 const config = require("./config.json");
 const filePath = path.join(__dirname, "domains.txt");
-const writer = fs.createWriteStream(filePath);
+const writer = fs.createWriteStream(filePath, { flags: "a" }); // Append mode
 
 async function main() {
-  const baseDomain = config.domain; 
+  const baseDomain = config.domain;
   const domains = generateDomains(baseDomain);
 
   let foundDomainCounter = 0;
-  const limit = pLimit(5); 
+  
+  for (let i = 0; i < domains.length; i++) {
+    const domain = domains[i];
+    const unknown = await isDomainUnknown(domain);
+    if (unknown) {
+      foundDomainCounter++;
+      writer.write(domain + "\n");
+    }
+    console.clear();
+    console.log(`Found: ${foundDomainCounter} - Checked: ${i + 1}/${domains.length} - Domain: ${domain}`);
+  }
 
-  const tasks = domains.map((domain, idx) =>
-    limit(async () => {
-      const unknown = await isDomainUnknown(domain);
-      if (unknown) {
-        foundDomainCounter++;
-        writer.write(domain + "\n");
-      }
-      // Log progress without clearing the console
-      console.clear();
-      console.log(`Found: ${foundDomainCounter} - Checked: ${idx + 1}/${domains.length} - Domain: ${domain}`);
-    })
-  );
-
-  await Promise.all(tasks);
   writer.end();
 }
 
