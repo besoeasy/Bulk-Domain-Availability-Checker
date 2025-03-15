@@ -1,8 +1,14 @@
 const fs = require("fs");
 const path = require("path");
 const dns = require("dns").promises;
+const readline = require("readline");
 
 const sapl = "abcdefghijklmnopqrstuvwxyz";
+
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout
+});
 
 // Function to check if a domain is unknown (unreachable)
 const isDomainUnknown = async (domain) => {
@@ -37,14 +43,11 @@ const generateDomains = (baseDomain) => {
   return domains;
 };
 
-const config = require("./config.json");
 const filePath = path.join(__dirname, "domains.txt");
 const writer = fs.createWriteStream(filePath, { flags: "a" }); // Append mode
 
-async function main() {
-  const baseDomain = config.domain;
+async function main(baseDomain) {
   const domains = generateDomains(baseDomain);
-
   let foundDomainCounter = 0;
   
   for (let i = 0; i < domains.length; i++) {
@@ -59,6 +62,9 @@ async function main() {
   }
 
   writer.end();
+  rl.close();
 }
 
-main();
+rl.question("Enter base domain: ", (baseDomain) => {
+  main(baseDomain);
+});
