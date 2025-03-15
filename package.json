@@ -1,0 +1,23 @@
+{
+  "name": "bulk-domain-availability-checker",
+  "version": "1.0.0",
+  "description": "## Description",
+  "main": "app.js",
+  "scripts": {
+    "test": "node app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/besoeasy/Bulk-Domain-Availability-Checker.git"
+  },
+  "author": "besoeasy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/besoeasy/Bulk-Domain-Availability-Checker/issues"
+  },
+  "homepage": "https://github.com/besoeasy/Bulk-Domain-Availability-Checker#readme",
+  "dependencies": {
+    "p-limit": "^2.3.0",
+    "whoiser": "^2.0.0-beta.3"
+  }
+}
